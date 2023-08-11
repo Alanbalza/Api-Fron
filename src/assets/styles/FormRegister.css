@@ -1,0 +1,39 @@
+.formulario {
+  display: flex;
+  justify-content: center;
+  margin: 5%;
+}
+.form_Register {
+  width: 378px;
+  height: 450px;
+  flex-shrink: 0;
+  border-radius: 55px;
+  background: #5cffe7;
+}
+.Colm {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  font: 2em sans-serif;
+  margin: 100px;
+  padding-left: 1%;
+}
+.text {
+  display: flex;
+  flex-direction: column;
+}
+
+.inp {
+  width: 53;
+  height: 51;
+  flex-shrink: 0;
+}
+
+.boton {
+  width: 50%;
+  flex-shrink: 0;
+  border-radius: 46px;
+  background: #6370ff;
+  margin-top: 13px;
+}
