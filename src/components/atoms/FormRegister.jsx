@@ -1,13 +1,26 @@
-import Swal from "sweetalert2";
 import React, { useState } from "react";
+import Swal from "sweetalert2";
 import "../../assets/styles/FormRegister.css";
 
 function RegisterForm() {
   const formDataF = React.useRef();
+  const [registeredEmails, setRegisteredEmails] = useState([]);
 
   const handlerClick = (e) => {
     e.preventDefault();
     const formData = new FormData(formDataF.current);
+    const userEmail = formData.get("correo");
+
+    if (!validateEmail(userEmail)) {
+      Swal.fire("Error", "Por favor ingresa un correo electrónico válido.", "error");
+      return;
+    }
+
+    if (isEmailRegistered(userEmail)) {
+      Swal.fire("Error", "El correo electrónico ya está en uso.", "error");
+      return;
+    }
+
     let URI = "http://localhost:3000/Users";
     let options = {
       method: "POST",
@@ -17,12 +30,13 @@ function RegisterForm() {
       body: JSON.stringify({
         Nombre: formData.get("name"),
         Telefono: formData.get("telefono"),
-        Correo: formData.get("correo"),
+        Correo: userEmail,
       }),
     };
     fetch(URI, options)
       .then((response) => response.json())
       .then((name) => {
+        setRegisteredEmails([...registeredEmails, userEmail]);
         alert(JSON.stringify(name));
       });
 
@@ -31,10 +45,18 @@ function RegisterForm() {
       width: 200,
       icon: "success",
       title: "Usuario Registrado",
-      text: JSON.stringify("Gracias"),
+      text: "Gracias",
       showConfirmButton: false,
       timer: 1500,
     });
+  };
+
+  const validateEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email);
+  };
+
+  const isEmailRegistered = (email) => {
+    return registeredEmails.includes(email);
   };
 
   return (
@@ -69,19 +91,17 @@ function RegisterForm() {
     </div>
   );
 }
-
 function DeleteUserView() {
-  const [correoUsuario, setCorreoUsuario] = useState("");
-
+  const [Correo, setCorreoUsuario] = useState("");
   const eliminarUsuario = () => {
-    if (correoUsuario.trim() === "") {
+    if (Correo.trim() === "") {
       Swal.fire("Error", "Por favor ingresa un correo válido.", "error");
       return;
     }
 
     Swal.fire({
       title: "Eliminar Usuario",
-      text: `¿Estás seguro de eliminar al usuario con correo ${correoUsuario}?`,
+      text: `¿Estás seguro de eliminar al usuario con correo ?`,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
@@ -89,7 +109,7 @@ function DeleteUserView() {
       confirmButtonText: "Sí, eliminar",
     }).then((result) => {
       if (result.isConfirmed) {
-        let URI = `http://localhost:3000/Users?Correo=${correoUsuario}`;
+        let URI = `http://localhost:3000/USERS/${Correo}`;
         let options = {
           method: "DELETE",
         };
@@ -112,11 +132,11 @@ function DeleteUserView() {
         <div>
           <h2>Eliminar Usuario</h2>
           <div className="text">
-            <label className="caption">Correo del Usuario</label>
+            <label className="caption" required >Correo del Usuario</label>
             <input
               className="inp"
               type="text"
-              value={correoUsuario}
+              value={Correo}
               onChange={(e) => setCorreoUsuario(e.target.value)}
             />
           </div>
